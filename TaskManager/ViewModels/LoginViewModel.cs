@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using TaskManager.Core;
 using TaskManager.Data;
 using TaskManager.Views;
+using TaskManager.Service;
 
 namespace TaskManager.ViewModels
 {
@@ -51,9 +52,11 @@ namespace TaskManager.ViewModels
                 
                 if (user != null)
                 {
+                    UserService.CurrentUser = user;
+
                     MainWindow mainWindow = new MainWindow();
                     mainWindow.Show();
-                  
+                    
                     foreach (Window window in Application.Current.Windows)
                     {
                         if (window is LoginView)

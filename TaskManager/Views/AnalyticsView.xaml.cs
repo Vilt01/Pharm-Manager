@@ -12,17 +12,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TaskManager.ViewModels;
 
 namespace TaskManager.Views
 {
-    /// <summary>
-    /// Логика взаимодействия для HomeView.xaml
-    /// </summary>
-    public partial class HomeView : UserControl
+    public partial class AnalyticsView : UserControl
     {
-        public HomeView()
+        public AnalyticsView()
         {
             InitializeComponent();
+            DataContext = new AnalyticsViewModel();
         }
     }
 }

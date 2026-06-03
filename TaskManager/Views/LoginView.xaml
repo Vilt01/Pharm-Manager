@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:vm="clr-namespace:TaskManager.ViewModels"
-        Title="Farm manager" Height="450" Width="800"
+        Title="Pharm manager" Height="450" Width="800"
         WindowStartupLocation="CenterScreen" >
 
     <Window.DataContext>
@@ -19,7 +19,7 @@
         <Border Background="White" Grid.ColumnSpan="2">
             <StackPanel VerticalAlignment="Center" Margin="80,0,80,0" Height="270">
 
-                <TextBlock Text="Войти в Farm Manager" 
+                <TextBlock Text="Войти в Pharm Manager" 
                            FontSize="24" HorizontalAlignment="Center" Margin="0,0,0,40"
                            FontWeight="Light" Foreground="Black"/>
 

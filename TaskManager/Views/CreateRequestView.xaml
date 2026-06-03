@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="TaskManager.Views.CreateRequestView"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TaskManager.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <materialDesign:Card
+            Width="400"
+            Background="White"
+            UniformCornerRadius="10"
+            Padding="20"
+            VerticalAlignment="Center"
+           HorizontalAlignment="Center">
+
+            <StackPanel>
+                <TextBlock Text="Формирование заявки"
+                       FontSize="20" FontWeight="Bold"
+                       HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                <TextBox Text="{Binding Name}" 
+                         materialDesign:HintAssist.Hint="Название заявки" 
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         Margin="0,0,0,15" />
+
+                <TextBox Text="{Binding Reason}"
+                         materialDesign:HintAssist.Hint="Причина"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         Margin="0,0,0,15" />
+
+                <TextBox Text="{Binding StringAmount}"
+                     materialDesign:HintAssist.Hint="Количество"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     Margin="0,0,0,15" />
+
+                <TextBox Text="{Binding UnitMeasure}"
+         materialDesign:HintAssist.Hint="Единица измерения"
+         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+         Margin="0,0,0,15" />
+
+                <TextBox Text="{Binding Ozm}"
+         materialDesign:HintAssist.Hint="ОЗМ"
+         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+         Margin="0,0,0,15" />
+
+                <TextBox Text="{Binding Url}"
+                    materialDesign:HintAssist.Hint="Url"
+                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                    Margin="0,0,0,15" />
+
+                <StackPanel Orientation="Horizontal"
+            HorizontalAlignment="Right"
+            Margin="0,20,0,0">
+                    <Button Content="Отмена"
+                            IsCancel="True"
+                            Command="{Binding CancelCommand}"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Margin="0,0,10,0" Cursor="Hand" />
+
+                    <Button Content="Сохранить"
+                            Command="{Binding SaveCommand}"
+                            Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                            IsDefault="True"
+                            Margin="0,0,10,0" />
+                </StackPanel>
+
+            </StackPanel>
+
+        </materialDesign:Card>
+    </Grid>
+</UserControl>

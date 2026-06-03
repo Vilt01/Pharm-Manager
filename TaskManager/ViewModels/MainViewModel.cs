@@ -1,33 +1,54 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-using TaskManager.Core;
-using TaskManager.Models;
-using TaskManager.Data; // Убедись, что AppDbContext здесь
+﻿using TaskManager.Core;
 
 namespace TaskManager.ViewModels
 {
-    public class OrdersViewModels : ObservableObject
+    public class MainViewModel : ObservableObject
     {
-        // Список заявок, к которому вяжется таблица
-        public ObservableCollection<Request> Requests { get; set; } = new ObservableCollection<Request>();
-
-        public OrdersViewModels()
+        // === 1. ТЕКУЩИЙ ВИД (Что показываем справа) ===
+        private object _currentView;
+        public object CurrentView
         {
-            LoadData();
+            get => _currentView;
+            set
+            {
+                _currentView = value;
+                OnPropertyChanged();
+            }
         }
 
-        private void LoadData()
+        // === 2. КОМАНДЫ НАВИГАЦИИ ===
+        public RelayCommand NavigateToHomeCommand { get; }
+        public RelayCommand NavigateToRequestsCommand { get; }
+        public RelayCommand NavigateToUserCommand { get; }
+        public RelayCommand NavigateToSettingCommand { get; }
+
+        // === 3. КОНСТРУКТОР ===
+        public MainViewModel()
         {
-            // Простая загрузка данных при старте
-            using (var context = new AppDbContext())
+            // Настройка кнопок
+            NavigateToHomeCommand = new RelayCommand(o =>
             {
-                var data = context.Orders.ToList();
-                Requests.Clear();
-                foreach (var item in data)
-                {
-                    Requests.Add(item);
-                }
-            }
+                CurrentView = new AnalyticsViewModel();
+            });
+
+            NavigateToRequestsCommand = new RelayCommand(o =>
+            {
+                // Вот тут мы создаем тот самый мощный RequestsViewModel, который писали ранее
+                CurrentView = new ZaprosViewModels();
+            });
+
+            NavigateToUserCommand = new RelayCommand(o =>
+            {
+                CurrentView = new UsersViewModel();
+            });
+
+            NavigateToSettingCommand = new RelayCommand(o =>
+            {
+                CurrentView = "В разработке";
+            });
+
+        // По умолчанию открываем "Главную"
+        CurrentView = new AnalyticsViewModel();
         }
     }
 }
