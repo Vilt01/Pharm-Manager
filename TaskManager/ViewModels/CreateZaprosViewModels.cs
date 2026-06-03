@@ -47,7 +47,7 @@ namespace TaskManager.ViewModels
                 return;
             }
             
-            var newRequest = new zapros
+            var newRequest = new Zapros
             {
                 Name = Name,
                 Ozm = Ozm,
@@ -57,14 +57,14 @@ namespace TaskManager.ViewModels
                 Url = Url??"",
                 DateCreate = DateTime.UtcNow,
                 StatusRequest = "Создан",
-                FkUser = UserService.CurrentUser.id
+                FkUser = UserService.CurrentUser.Id
             };
 
             try
             {
                 using (var db = new AppDbContext())
                 {
-                    db.Requests.Add(newRequest);
+                    db.Zapros.Add(newRequest);
                     db.SaveChanges();
                 }
 

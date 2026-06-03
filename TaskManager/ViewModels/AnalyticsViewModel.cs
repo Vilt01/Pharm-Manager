@@ -52,7 +52,7 @@ namespace TaskManager.ViewModels
             using (var db = new AppDbContext())
             {
                 // Загружаем в память, чтобы избежать проблем с трансляцией дат в SQL
-                var allRequests = db.Requests.ToList();
+                var allRequests = db.Zapros.ToList();
 
                 // 1. КРУГОВАЯ ДИАГРАММА
                 int totalCreated = allRequests.Count;

@@ -69,9 +69,9 @@ namespace TaskManager.ViewModels
             using (var db = new AppDbContext())
             {
                 // ИНТЕГРАЦИЯ ШАГА 3: Загружаем только тех, у кого IsDeleted == false
-                var data = db.User
-                    .Include(u => u.fk_role)
-                    .Include(u => u.fk_department)
+                var data = db.Users
+                    .Include(u => u.FkRole)
+                    .Include(u => u.FkDepartment)
                     .Where(u => !u.is_deleted)
                     .ToList();
 
@@ -99,19 +99,19 @@ namespace TaskManager.ViewModels
                 if (user == null) return false;
 
                 // Если строка поиска пустая — показываем всех
-                if (string.IsNullOrWhiteSpace(SearchText)) return SelectedRole == null || user.fk_role == SelectedRole.Id;
+                if (string.IsNullOrWhiteSpace(SearchText)) return SelectedRole == null || user.FkRole == SelectedRole.Id;
 
                 // Проверка по всем полям (регистронезависимая)
                 bool matchesSearch =
-                    (user.name?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (user.surname?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (user.lastname?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (user.login?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (user.mail?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (user.phone?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false);
+                    (user.Name?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (user.Surname?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (user.Lastname?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (user.Login?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (user.Mail?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (user.Phone?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false);
 
                 // Учитываем также выбранную роль в левом меню
-                bool matchesRole = SelectedRole == null || user.fk_role == SelectedRole.Id;
+                bool matchesRole = SelectedRole == null || user.FkRole == SelectedRole.Id;
 
                 return matchesSearch && matchesRole;
             };
@@ -148,7 +148,7 @@ namespace TaskManager.ViewModels
                 {
                     // ИНТЕГРАЦИЯ ШАГА 3: Вместо физического удаления меняем статус IsDeleted
                     var ids = toDelete.Select(u => u.id).ToList();
-                    var usersInDb = db.User.Where(u => ids.Contains(u.id)).ToList();
+                    var usersInDb = db.Users.Where(u => ids.Contains(u.Id)).ToList();
 
                     foreach (var user in usersInDb)
                     {

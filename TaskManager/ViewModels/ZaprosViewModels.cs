@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Input; // <--- Важный using для CommandManager
+using System.Windows.Input;
 using TaskManager.Core;
 using TaskManager.Data;
 using TaskManager.Models;
@@ -16,11 +16,11 @@ namespace TaskManager.ViewModels
     {
         private readonly AppDbContext _context;
 
-        public ObservableCollection<zapros> Requests { get; set; } = new ObservableCollection<zapros>();
+        public ObservableCollection<Zapros> Requests { get; set; } = new ObservableCollection<Zapros>();
         public ICollectionView RequestsView { get; set; }
 
         //Архив хранения копий всех данных
-        private List<zapros> _allRequests = new List<zapros>();
+        private List<Zapros> _allRequests = new List<Zapros>();
 
         // 2. Список слов для выпадающего меню
         public List<string> Statuses { get; } = new List<string>
@@ -101,14 +101,14 @@ namespace TaskManager.ViewModels
         private void LoadData()
         {
             Requests.Clear();
-            var data = _context.Requests.OrderByDescending(r => r.Id).ToList();
+            var data = _context.Zapros.OrderByDescending(r => r.Id).ToList();
             _allRequests = data;
 
             foreach (var item in data)
             {
                 item.PropertyChanged += (s, e) =>
                 {
-                    if (e.PropertyName == nameof(zapros.IsSelected))
+                    if (e.PropertyName == nameof(Zapros.IsSelected))
                         UpdateButtonsStateCommand.Execute(null);
                 };
                 Requests.Add(item);
@@ -178,7 +178,7 @@ namespace TaskManager.ViewModels
                 try
                 {
                     // 3. Пытаемся удалить через Entity Framework
-                    _context.Requests.RemoveRange(itemsToDelete);
+                    _context.Zapros.RemoveRange(itemsToDelete);
                     _context.SaveChanges(); // <-- Здесь произойдет попытка записи в БД
 
                     // 4. Если ошибок не было — обновляем список на экране
