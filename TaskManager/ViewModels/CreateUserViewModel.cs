@@ -66,16 +66,16 @@ namespace TaskManager.ViewModels
             if (_editingUser != null)
             {
                 WindowTitle = "Редактирование пользователя";
-                Name = _editingUser.name;
-                SurName = _editingUser.surname;
-                LastName = _editingUser.lastname;
-                NumberPhone = _editingUser.phone;
-                Mail = _editingUser.mail;
-                Login = _editingUser.login;
-                Password = _editingUser.password;
+                Name = _editingUser.Name;
+                SurName = _editingUser.Surname;
+                LastName = _editingUser.Lastname;
+                NumberPhone = _editingUser.Phone;
+                Mail = _editingUser.Mail;
+                Login = _editingUser.Login;
+                Password = _editingUser.Password;
 
-                SelectedRole = Roles.FirstOrDefault(r => r.Id == _editingUser.fk_role);
-                SelectedDepartment = Departments.FirstOrDefault(d => d.Id == _editingUser.fk_department);
+                SelectedRole = Roles.FirstOrDefault(r => r.Id == _editingUser.FkRole);
+                SelectedDepartment = Departments.FirstOrDefault(d => d.Id == _editingUser.FkDepartment);
             }
 
             SaveCommand = new RelayCommand(o => SaveData());
@@ -99,32 +99,32 @@ namespace TaskManager.ViewModels
                     {
                         var newUser = new User
                         {
-                            name = Name,
-                            surname = SurName,
-                            lastname = LastName,
-                            phone = NumberPhone,
-                            mail = Mail,
-                            login = Login,
-                            password = Password,
-                            fk_role = SelectedRole.Id,
-                            fk_department = SelectedDepartment?.Id
+                            Name = Name,
+                            Surname = SurName,
+                            Lastname = LastName,
+                            Phone = NumberPhone,
+                            Mail = Mail,
+                            Login = Login,
+                            Password = Password,
+                            FkRole = SelectedRole.Id,
+                            FkDepartment = SelectedDepartment?.Id
                         };
-                        db.User.Add(newUser);
+                        db.Users.Add(newUser);
                     }
                     else
                     {
-                        var userToUpdate = db.User.FirstOrDefault(u => u.id == _editingUser.id);
+                        var userToUpdate = db.Users.FirstOrDefault(u => u.Id == _editingUser.Id);
                         if (userToUpdate != null)
                         {
-                            userToUpdate.name = Name;
-                            userToUpdate.surname = SurName;
-                            userToUpdate.lastname = LastName;
-                            userToUpdate.phone = NumberPhone;
-                            userToUpdate.mail = Mail;
-                            userToUpdate.login = Login;
-                            userToUpdate.password = Password;
-                            userToUpdate.fk_role = SelectedRole.Id;
-                            userToUpdate.fk_department = SelectedDepartment?.Id;
+                            userToUpdate.Name = Name;
+                            userToUpdate.Surname = SurName;
+                            userToUpdate.Lastname = LastName;
+                            userToUpdate.Phone = NumberPhone;
+                            userToUpdate.Mail = Mail;
+                            userToUpdate.Login = Login;
+                            userToUpdate.Password = Password;
+                            userToUpdate.FkRole = SelectedRole.Id;
+                            userToUpdate.FkDepartment = SelectedDepartment?.Id;
                         }
                     }
 

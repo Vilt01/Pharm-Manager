@@ -1,60 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace TaskManager.Models
+namespace TaskManager.Models;
+
+public partial class Zapros
 {
-    public class zapros : INotifyPropertyChanged
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
-        public string Reason { get; set; }
+    public string Reason { get; set; } = null!;
 
-        public string Url { get; set; }
+    public string Url { get; set; } = null!;
 
-        public string UnitMeasure { get; set; }
+    public string UnitMeasure { get; set; } = null!;
 
-        public DateTime DateCreate { get; set; }
+    public DateOnly DateCreate { get; set; }
 
-        public string StatusRequest { get; set; }
+    public string StatusRequest { get; set; } = null!;
 
-        public int? FkUser { get; set; }
+    public int FkUser { get; set; }
 
-        public decimal Amount { get; set; }
+    public decimal? Amount { get; set; }
 
-        public string Ozm { get; set; }
+    public string? Ozm { get; set; }
 
-        public DateTime? DateProcess { get; set; }
+    public DateTime? DateProcess { get; set; }
 
-        public DateTime? DateComplete { get; set; }
+    public DateTime? DateComplete { get; set; }
 
-        private bool _isSelected;
-        [NotMapped]
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set
-            {
-                if (_isSelected != value)
-                {
-                    _isSelected = value;
-                    OnPropertyChanged(); 
-                }
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-    }
+    public virtual User FkUserNavigation { get; set; } = null!;
+
+    public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
 }

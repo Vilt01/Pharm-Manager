@@ -1,39 +1,49 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.CompilerServices;
+﻿using System;
+using System.Collections.Generic;
 
-namespace TaskManager.Models
+namespace TaskManager.Models;
+
+public partial class User 
 {
-    public class User : INotifyPropertyChanged
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string surname { get; set; }
-        public string lastname { get; set; }
-        public string phone { get; set; }
-        public string mail { get; set; }
-        public string login { get; set; }
-        public string password { get; set; }
-        public byte[]? avatar { get; set; }
-        public int? fk_role { get; set; }
-        public int? fk_manager_id { get; set; }
-        public int? fk_department { get; set; }
-        public bool is_deleted { get; set; }
+    public int Id { get; set; }
 
-        private bool _isSelected;
-        [NotMapped]
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set { _isSelected = value; OnPropertyChanged(); }
-        }
+    public string Name { get; set; } = null!;
 
-        [NotMapped]
-        public string FullName => $"{surname} {name} {lastname}".Trim();
+    public string Surname { get; set; } = null!;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string prop = "") =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-    }
+    public string Lastname { get; set; } = null!;
+
+    public string Phone { get; set; } = null!;
+
+    public string Mail { get; set; } = null!;
+
+    public string Login { get; set; } = null!;
+
+    public string Password { get; set; } = null!;
+
+    public int FkRole { get; set; }
+
+    public int? FkManagerId { get; set; }
+
+    public int? FkDepartment { get; set; }
+
+    public byte[]? Avatar { get; set; }
+
+    public bool? IsDeleted { get; set; }
+
+    public virtual Department? FkDepartmentNavigation { get; set; }
+
+    public virtual User? FkManager { get; set; }
+
+    public virtual Role FkRoleNavigation { get; set; } = null!;
+
+    public virtual ICollection<User> InverseFkManager { get; set; } = new List<User>();
+
+    public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
+
+    public virtual ICollection<StoryModification> StoryModifications { get; set; } = new List<StoryModification>();
+
+    public virtual ICollection<Zapros> Zapros { get; set; } = new List<Zapros>();
+
+   
 }

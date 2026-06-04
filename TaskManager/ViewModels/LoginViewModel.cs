@@ -47,8 +47,8 @@ namespace TaskManager.ViewModels
           
             using (var db = new AppDbContext())
             {
-                var user = db.User
-                    .FirstOrDefault(u => u.login == Username && u.password == password);
+                var user = db.Users
+                    .FirstOrDefault(u => u.Login == Username && u.Password == password);
                 
                 if (user != null)
                 {

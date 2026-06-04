@@ -52,7 +52,7 @@ namespace TaskManager.ViewModels
             using (var db = new AppDbContext())
             {
                 // Загружаем в память, чтобы избежать проблем с трансляцией дат в SQL
-                var allRequests = db.Requests.ToList();
+                var allRequests = db.Zapros.ToList();
 
                 // 1. КРУГОВАЯ ДИАГРАММА
                 int totalCreated = allRequests.Count;
@@ -90,8 +90,8 @@ namespace TaskManager.ViewModels
                 foreach (var date in lastWeek)
                 {
                     // Считаем заявки за этот день (сравниваем только Date)
-                    createdCounts.Add(allRequests.Count(r => r.DateCreate.Date == date.Date));
-                    completedCounts.Add(allRequests.Count(r => r.DateComplete.HasValue && r.DateComplete.Value.Date == date.Date));
+                    createdCounts.Add(allRequests.Count(r => r.DateCreate == DateOnly.FromDateTime(date)));
+                    completedCounts.Add(allRequests.Count(r => r.DateComplete.HasValue && r.DateComplete.Value.Date == date));
                 }
 
                 CreatedRequestsSeries = new SeriesCollection
