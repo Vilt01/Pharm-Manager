@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TaskManager.Models;
 
-public partial class User
+public partial class User 
 {
     public int Id { get; set; }
 
@@ -44,4 +44,6 @@ public partial class User
     public virtual ICollection<StoryModification> StoryModifications { get; set; } = new List<StoryModification>();
 
     public virtual ICollection<Zapros> Zapros { get; set; } = new List<Zapros>();
+
+   
 }
