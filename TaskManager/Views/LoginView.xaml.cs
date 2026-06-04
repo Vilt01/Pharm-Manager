@@ -14,9 +14,6 @@ using System.Windows.Shapes;
 
 namespace TaskManager.Views
 {
-    /// <summary>
-    /// Логика взаимодействия для ViewModel.xaml
-    /// </summary>
     public partial class LoginView : Window
     {
         public LoginView()
