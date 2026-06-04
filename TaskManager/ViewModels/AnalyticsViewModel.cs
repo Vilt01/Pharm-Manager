@@ -90,8 +90,8 @@ namespace TaskManager.ViewModels
                 foreach (var date in lastWeek)
                 {
                     // Считаем заявки за этот день (сравниваем только Date)
-                    createdCounts.Add(allRequests.Count(r => r.DateCreate.Date == date.Date));
-                    completedCounts.Add(allRequests.Count(r => r.DateComplete.HasValue && r.DateComplete.Value.Date == date.Date));
+                    createdCounts.Add(allRequests.Count(r => r.DateCreate == DateOnly.FromDateTime(date)));
+                    completedCounts.Add(allRequests.Count(r => r.DateComplete.HasValue && r.DateComplete.Value == DateOnly.FromDateTime(date)));
                 }
 
                 CreatedRequestsSeries = new SeriesCollection

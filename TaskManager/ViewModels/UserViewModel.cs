@@ -4,17 +4,17 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Core;
 using TaskManager.Data;
 using TaskManager.Models;
-using System.Collections.Generic;
 
 namespace TaskManager.ViewModels
 {
     public class UsersViewModel : ObservableObject
     {
-        public ObservableCollection<User> Users { get; set; } = new ObservableCollection<User>();
+        public ObservableCollection<UserItemViewModel> Users { get; set; } = new ObservableCollection<UserItemViewModel>();
 
         private ICollectionView _usersView;
         public ICollectionView UsersView
@@ -26,16 +26,32 @@ namespace TaskManager.ViewModels
         public ObservableCollection<Role> Roles { get; set; } = new ObservableCollection<Role>();
 
         private string _searchText;
-        public string SearchText { get => _searchText; set { _searchText = value; OnPropertyChanged(); ApplyFilter(); } }
+        public string SearchText
+        {
+            get => _searchText;
+            set { _searchText = value; OnPropertyChanged(); ApplyFilter(); }
+        }
 
         private Role _selectedRole;
-        public Role SelectedRole { get => _selectedRole; set { _selectedRole = value; OnPropertyChanged(); ApplyFilter(); } }
+        public Role SelectedRole
+        {
+            get => _selectedRole;
+            set { _selectedRole = value; OnPropertyChanged(); ApplyFilter(); }
+        }
 
         private CreateUserViewModel _createUserVM;
-        public CreateUserViewModel CreateUserVM { get => _createUserVM; set { _createUserVM = value; OnPropertyChanged(); } }
+        public CreateUserViewModel CreateUserVM
+        {
+            get => _createUserVM;
+            set { _createUserVM = value; OnPropertyChanged(); }
+        }
 
         private bool _isModalOpen;
-        public bool IsModalOpen { get => _isModalOpen; set { _isModalOpen = value; OnPropertyChanged(); } }
+        public bool IsModalOpen
+        {
+            get => _isModalOpen;
+            set { _isModalOpen = value; OnPropertyChanged(); }
+        }
 
         public RelayCommand AddCommand { get; }
         public RelayCommand EditCommand { get; }
@@ -65,28 +81,22 @@ namespace TaskManager.ViewModels
 
         public void RefreshUsers()
         {
-            Users.Clear();
             using (var db = new AppDbContext())
             {
-                // ИНТЕГРАЦИЯ ШАГА 3: Загружаем только тех, у кого IsDeleted == false
-                var data = db.Users
-                    .Include(u => u.FkRole)
-                    .Include(u => u.FkDepartment)
-                    .Where(u => !u.is_deleted)
+                var usersFromDb = db.Users
+                    .Include(u => u.FkRoleNavigation)
+                    .Include(u => u.FkDepartmentNavigation)
+                    .Where(u => !u.IsDeleted)
                     .ToList();
 
-                foreach (var user in data)
+                Users.Clear();
+                foreach (var user in usersFromDb)
                 {
-                    user.IsSelected = false; // Сбрасываем выбор
-                    user.PropertyChanged += (s, e) => {
-                        if (e.PropertyName == nameof(User.IsSelected))
-                            System.Windows.Input.CommandManager.InvalidateRequerySuggested();
-                    };
-                    Users.Add(user);
+                    Users.Add(new UserItemViewModel(user));
                 }
             }
             UsersView = CollectionViewSource.GetDefaultView(Users);
-            UsersView.Refresh();
+            ApplyFilter();
         }
 
         private void ApplyFilter()
@@ -95,14 +105,12 @@ namespace TaskManager.ViewModels
 
             UsersView.Filter = o =>
             {
-                var user = o as User;
-                if (user == null) return false;
+                var wrapper = o as UserItemViewModel;
+                if (wrapper == null) return false;
 
-                // Если строка поиска пустая — показываем всех
-                if (string.IsNullOrWhiteSpace(SearchText)) return SelectedRole == null || user.FkRole == SelectedRole.Id;
+                var user = wrapper.Model;
 
-                // Проверка по всем полям (регистронезависимая)
-                bool matchesSearch =
+                bool matchesSearch = string.IsNullOrWhiteSpace(SearchText) ||
                     (user.Name?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (user.Surname?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (user.Lastname?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
@@ -110,11 +118,11 @@ namespace TaskManager.ViewModels
                     (user.Mail?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (user.Phone?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false);
 
-                // Учитываем также выбранную роль в левом меню
                 bool matchesRole = SelectedRole == null || user.FkRole == SelectedRole.Id;
 
                 return matchesSearch && matchesRole;
             };
+            UsersView.Refresh();
         }
 
         private void OpenCreateUserWindow()
@@ -127,10 +135,10 @@ namespace TaskManager.ViewModels
 
         private void OpenEditUserWindow()
         {
-            var selected = Users.FirstOrDefault(u => u.IsSelected);
-            if (selected == null) return;
+            var selectedWrapper = Users.FirstOrDefault(u => u.IsSelected);
+            if (selectedWrapper == null) return;
 
-            var vm = new CreateUserViewModel(selected);
+            var vm = new CreateUserViewModel(selectedWrapper.Model);
             vm.RequestClose += () => { IsModalOpen = false; CreateUserVM = null; RefreshUsers(); };
             CreateUserVM = vm;
             IsModalOpen = true;
@@ -146,18 +154,16 @@ namespace TaskManager.ViewModels
             {
                 using (var db = new AppDbContext())
                 {
-                    // ИНТЕГРАЦИЯ ШАГА 3: Вместо физического удаления меняем статус IsDeleted
-                    var ids = toDelete.Select(u => u.id).ToList();
+                    var ids = toDelete.Select(w => w.Model.Id).ToList();
                     var usersInDb = db.Users.Where(u => ids.Contains(u.Id)).ToList();
 
                     foreach (var user in usersInDb)
                     {
-                        user.is_deleted = true;
+                        user.IsDeleted = true;
                     }
-
                     db.SaveChanges();
                 }
-                RefreshUsers(); // Обновляем список, чтобы помеченные записи исчезли
+                RefreshUsers();
             }
         }
     }
