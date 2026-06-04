@@ -9,108 +9,99 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="White">
-    
+
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </UserControl.Resources>
     <Grid>
 
-
         <Grid Margin="20">
-        
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Button Command="{Binding CreateCommand}"
+                            Width="40" Height="40"
+                            Margin="0,0,10,0"
+                            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                            ToolTip="Создать новую заявку">
+                        <materialDesign:PackIcon Kind="Plus" Width="24" Height="24"/>
+                    </Button>
 
-                <Button Command="{Binding CreateCommand}"
-                        Width="40" Height="40"
-                        Margin="0,0,10,0"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                        ToolTip="Создать новую заявку">
-                    <materialDesign:PackIcon Kind="Plus" Width="24" Height="24"/>
-                </Button>
+                    <Button Command="{Binding EditCommand}"
+                            Width="40" Height="40"
+                            Margin="0,0,10,0"
+                            Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                            ToolTip="Редактировать выделенную">
+                        <materialDesign:PackIcon Kind="Pencil" Width="20" Height="20"/>
+                    </Button>
 
-                <Button Command="{Binding EditCommand}"
-                        Width="40" Height="40"
-                        Margin="0,0,10,0"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-                        ToolTip="Редактировать выделенную">
-                    <materialDesign:PackIcon Kind="Pencil" Width="20" Height="20"/>
-                </Button>
-
-                <Button Command="{Binding DeleteCommand}"
-                        Width="40" Height="40"
-                        Background="#FF5555" BorderBrush="#FF5555"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-                        ToolTip="Удалить выбранные">
-                    <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
-                </Button>
-            </StackPanel>
+                    <Button Command="{Binding DeleteCommand}"
+                            Width="40" Height="40"
+                            Background="#FF5555" BorderBrush="#FF5555"
+                            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                            ToolTip="Удалить выбранные">
+                        <materialDesign:PackIcon Kind="Delete" Width="20" Height="20"/>
+                    </Button>
+                </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Bottom">
-
                     <TextBox Width="200"
-                         FontSize="14"
-                         materialDesign:HintAssist.Hint="Поиск..."
-                         materialDesign:TextFieldAssist.HasClearButton="True"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
-                         Margin="0,0,15,0"/>
-
+                             FontSize="14"
+                             materialDesign:HintAssist.Hint="Поиск..."
+                             materialDesign:TextFieldAssist.HasClearButton="True"
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                             Margin="0,0,15,0"/>
 
                     <ComboBox ItemsSource="{Binding Statuses}"
-                          SelectedItem="{Binding SelectedStatus}"
-                          Width="120"
-                          materialDesign:HintAssist.Hint="Статус"
-                          Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
-
+                              SelectedItem="{Binding SelectedStatus}"
+                              Width="120"
+                              materialDesign:HintAssist.Hint="Статус"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
                 </StackPanel>
             </Grid>
 
-        <DataGrid Grid.Row="1"
-                  ItemsSource="{Binding RequestsView}"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  IsReadOnly="False" 
-                  SelectionMode="Extended"
-                  HeadersVisibility="Column"
-                  GridLinesVisibility="Horizontal">
+            <DataGrid Grid.Row="1"
+                      ItemsSource="{Binding RequestsView}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      IsReadOnly="False" 
+                      SelectionMode="Extended"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal">
 
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Width="50">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
-                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="50">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
+                    <DataGridTextColumn Header="№" Binding="{Binding Model.Id}" IsReadOnly="True" Width="50"/>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Model.Name}" IsReadOnly="True" Width="*" CanUserSort="False"/>
+                    <DataGridTextColumn Header="Код (OZM)" Binding="{Binding Model.Ozm}" IsReadOnly="True" Width="100" CanUserSort="False"/>
+                    <DataGridTextColumn Header="Статус" Binding="{Binding Model.StatusRequest}" IsReadOnly="True" Width="120" CanUserSort="False"/>
+                    <DataGridTextColumn Header="Дата" Binding="{Binding Model.DateCreate, StringFormat=dd.MM.yyyy}" IsReadOnly="True" Width="100" CanUserSort="False"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
 
-                <DataGridTextColumn Header="№" Binding="{Binding Id}" IsReadOnly="True" Width="50"/>
-                <DataGridTextColumn Header="Название" Binding="{Binding Name}" IsReadOnly="True" Width="*" CanUserSort="False"/>
-                <DataGridTextColumn Header="Код (OZM)" Binding="{Binding Ozm}" IsReadOnly="True" Width="100" CanUserSort="False"/>
-                <DataGridTextColumn Header="Статус" Binding="{Binding StatusRequest}" IsReadOnly="True" Width="120" CanUserSort="False"/>
-                <DataGridTextColumn Header="Дата" Binding="{Binding DateCreate, StringFormat=dd.MM.yyyy}" IsReadOnly="True" Width="100" CanUserSort="False"/>
-            </DataGrid.Columns>
-        </DataGrid>
-     </Grid>
-        
         <Grid Visibility="{Binding IsModalOpen, Converter={StaticResource BoolToVis}}">
-
             <Border Background="Black" Opacity="0.5"/>
-
             <local:CreateRequestView DataContext="{Binding CreateRequestVM}" />
-
         </Grid>
     </Grid>
 </UserControl>

@@ -12,7 +12,6 @@ using System.Collections.Generic;
 
 namespace TaskManager.ViewModels
 {
-    // Обёртка для Zapros (можно вынести в отдельный файл)
     public class ZaprosItemViewModel : ItemViewModel<Zapros>
     {
         public ZaprosItemViewModel(Zapros model) : base(model) { }
@@ -22,12 +21,10 @@ namespace TaskManager.ViewModels
     {
         private readonly AppDbContext _context;
 
-        public ObservableCollection<ZaprosItemViewModel> Requests { get; set; } = new ObservableCollection<ZaprosItemViewModel>();
-        public ICollectionView RequestsView { get; set; }
+        public ObservableCollection<ZaprosItemViewModel> Requests { get; set; } = new();
+        public ICollectionView RequestsView { get; private set; }
 
-        private List<ZaprosItemViewModel> _allRequests = new List<ZaprosItemViewModel>();
-
-        public List<string> Statuses { get; } = new List<string> { "Все", "Создан", "В работе", "Завершен" };
+        public List<string> Statuses { get; } = new() { "Все", "Создан", "В работе", "Завершен" };
 
         private string _selectedStatus = "Все";
         public string SelectedStatus
@@ -84,12 +81,10 @@ namespace TaskManager.ViewModels
         private void LoadData()
         {
             var data = _context.Zapros.OrderByDescending(r => r.Id).ToList();
-            _allRequests = data.Select(z => new ZaprosItemViewModel(z)).ToList();
-
             Requests.Clear();
-            foreach (var item in _allRequests)
+            foreach (var zapros in data)
             {
-                // Подписываемся на изменение IsSelected у обёртки, чтобы обновить состояние кнопок
+                var item = new ZaprosItemViewModel(zapros);
                 item.PropertyChanged += (s, e) =>
                 {
                     if (e.PropertyName == nameof(ItemViewModel<Zapros>.IsSelected))
@@ -98,8 +93,30 @@ namespace TaskManager.ViewModels
                 Requests.Add(item);
             }
 
+            // Создаём ICollectionView один раз
             RequestsView = CollectionViewSource.GetDefaultView(Requests);
-            ApplyFilter();
+            RequestsView.Filter = o => FilterPredicate(o as ZaprosItemViewModel);
+            ApplyFilter(); // применяем текущий фильтр
+        }
+
+        private bool FilterPredicate(ZaprosItemViewModel wrapper)
+        {
+            if (wrapper == null) return false;
+            var model = wrapper.Model;
+
+            bool matchesSearch = string.IsNullOrWhiteSpace(SearchText) ||
+                (model.Name?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false);
+
+            bool matchesStatus = SelectedStatus == "Все" || model.StatusRequest == SelectedStatus;
+
+            bool matchesDate = !SelectedDate.HasValue || model.DateCreate == DateOnly.FromDateTime(SelectedDate.Value);
+
+            return matchesSearch && matchesStatus && matchesDate;
+        }
+
+        private void ApplyFilter()
+        {
+            RequestsView?.Refresh(); // просто обновляем фильтр
         }
 
         private bool CanEdit()
@@ -122,7 +139,7 @@ namespace TaskManager.ViewModels
             {
                 IsModalOpen = false;
                 CreateRequestVM = null;
-                LoadData();
+                LoadData(); // перезагружаем данные после создания
             };
             CreateRequestVM = vm;
             IsModalOpen = true;
@@ -148,9 +165,9 @@ namespace TaskManager.ViewModels
                     var modelsToDelete = itemsToDelete.Select(w => w.Model).ToList();
                     _context.Zapros.RemoveRange(modelsToDelete);
                     _context.SaveChanges();
-                    LoadData();
+                    LoadData(); // перезагружаем данные после удаления
                 }
-                catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
+                catch (Microsoft.EntityFrameworkCore.DbUpdateException)
                 {
                     MessageBox.Show("Невозможно удалить одну или несколько заявок.\n\nПричина: Эти заявки используются в других таблицах (например, в Журнале действий).",
                                     "Ошибка удаления", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -162,34 +179,6 @@ namespace TaskManager.ViewModels
                     MessageBox.Show($"Произошла ошибка: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-        }
-
-        private void ApplyFilter()
-        {
-            var filtered = _allRequests.AsEnumerable();
-
-            if (!string.IsNullOrEmpty(SearchText))
-            {
-                filtered = filtered.Where(w => w.Model.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
-            }
-
-            if (!string.IsNullOrEmpty(SelectedStatus) && SelectedStatus != "Все")
-            {
-                filtered = filtered.Where(w => w.Model.StatusRequest == SelectedStatus);
-            }
-
-            if (SelectedDate != null)
-            {
-                var targetDate = DateOnly.FromDateTime(SelectedDate.Value);
-                filtered = filtered.Where(w => w.Model.DateCreate == targetDate);
-            }
-
-            Requests.Clear();
-            foreach (var item in filtered)
-            {
-                Requests.Add(item);
-            }
-            RequestsView?.Refresh();
         }
     }
 }

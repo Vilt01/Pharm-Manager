@@ -110,15 +110,18 @@
                                     <TextBlock Grid.Row="2" Text="{Binding FullName}" 
                                                FontSize="14" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,3"/>
 
-                                    <TextBlock Grid.Row="3" Text="{Binding Mail}" 
+                                    <!-- ===== ИСПРАВЛЕННАЯ ПРИВЯЗКА ДЛЯ ПОЧТЫ ===== -->
+                                    <TextBlock Grid.Row="3" Text="{Binding Model.Mail}" 
                                                Foreground="#2196F3" FontSize="11" TextAlignment="Center" Margin="0,0,0,3"/>
 
-                                    <TextBlock Grid.Row="4" Text="{Binding Role.Name}" 
+                                    <!-- ===== ИСПРАВЛЕННАЯ ПРИВЯЗКА ДЛЯ РОЛИ ===== -->
+                                    <TextBlock Grid.Row="4" Text="{Binding RoleName}" 
                                                Foreground="Black" FontSize="12" FontWeight="Medium" TextAlignment="Center" Margin="0,0,0,5"/>
 
                                     <StackPanel Grid.Row="5" Opacity="0.7">
-                                        <TextBlock Text="{Binding Login, StringFormat='Логин: {0}'}" FontSize="10" TextAlignment="Center"/>
-                                        <TextBlock Text="{Binding NumberPhone, StringFormat='Тел: {0}'}" FontSize="10" TextAlignment="Center"/>
+                                        <!-- ===== ИСПРАВЛЕННЫЕ ПРИВЯЗКИ ДЛЯ ЛОГИНА И ТЕЛЕФОНА ===== -->
+                                        <TextBlock Text="{Binding Model.Login, StringFormat='Логин: {0}'}" FontSize="10" TextAlignment="Center"/>
+                                        <TextBlock Text="{Binding Model.Phone, StringFormat='Тел: {0}'}" FontSize="10" TextAlignment="Center"/>
                                     </StackPanel>
                                 </Grid>
                             </materialDesign:Card>
@@ -131,6 +134,5 @@
         <Grid Grid.ColumnSpan="2" Visibility="{Binding IsModalOpen, Converter={StaticResource BoolToVis}}">
             <local:CreateUserView DataContext="{Binding CreateUserVM}"/>
         </Grid>
-
     </Grid>
 </UserControl>
