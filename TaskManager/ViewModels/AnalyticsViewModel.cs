@@ -91,7 +91,7 @@ namespace TaskManager.ViewModels
                 {
                     // Считаем заявки за этот день (сравниваем только Date)
                     createdCounts.Add(allRequests.Count(r => r.DateCreate == DateOnly.FromDateTime(date)));
-                    completedCounts.Add(allRequests.Count(r => r.DateComplete.HasValue && r.DateComplete.Value == DateOnly.FromDateTime(date)));
+                    completedCounts.Add(allRequests.Count(r => r.DateComplete.HasValue && r.DateComplete.Value.Date == date));
                 }
 
                 CreatedRequestsSeries = new SeriesCollection

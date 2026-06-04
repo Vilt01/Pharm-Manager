@@ -55,7 +55,7 @@ namespace TaskManager.ViewModels
                 Amount = finalAmount,
                 UnitMeasure = UnitMeasure,
                 Url = Url??"",
-                DateCreate = DateTime.UtcNow,
+                DateCreate = DateOnly.FromDateTime(DateTime.UtcNow),
                 StatusRequest = "Создан",
                 FkUser = UserService.CurrentUser.Id
             };

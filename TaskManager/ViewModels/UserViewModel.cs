@@ -86,7 +86,7 @@ namespace TaskManager.ViewModels
                 var usersFromDb = db.Users
                     .Include(u => u.FkRoleNavigation)
                     .Include(u => u.FkDepartmentNavigation)
-                    .Where(u => !u.IsDeleted)
+                    .Where(u => u.IsDeleted == false)
                     .ToList();
 
                 Users.Clear();

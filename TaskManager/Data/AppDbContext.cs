@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration; // ← добавить
+using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+using System.IO;
 using TaskManager.Models;
 
 namespace TaskManager.Data;
@@ -17,29 +19,34 @@ public partial class AppDbContext : DbContext
     }
 
     public virtual DbSet<Department> Departments { get; set; }
-
     public virtual DbSet<Request> Requests { get; set; }
-
     public virtual DbSet<Role> Roles { get; set; }
-
     public virtual DbSet<StoryModification> StoryModifications { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
-
     public virtual DbSet<Zapros> Zapros { get; set; }
 
+    // 👇 ДОБАВИТЬ ЭТОТ МЕТОД
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=2417");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            optionsBuilder.UseNpgsql(connectionString);
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // ... весь ваш код без изменений ...
         modelBuilder.Entity<Department>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Department_pkey");
-
             entity.ToTable("Department");
-
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
@@ -51,9 +58,7 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Request>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Request_pkey1");
-
             entity.ToTable("Request");
-
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
@@ -77,9 +82,7 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Role_pkey");
-
             entity.ToTable("Role");
-
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
@@ -91,9 +94,7 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<StoryModification>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("StoryModification_pkey");
-
             entity.ToTable("StoryModification");
-
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
@@ -117,9 +118,7 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("User_pkey");
-
             entity.ToTable("User");
-
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
@@ -167,7 +166,6 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<Zapros>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Request_pkey");
-
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasIdentityOptions(4L, null, null, null, null, null)
